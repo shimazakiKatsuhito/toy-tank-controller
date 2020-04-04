@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Toy Tank Controller</string>
+
+    <string name="btn_fore">↑</string>
+    <string name="btn_back">↓</string>
+    <string name="btn_right">→</string>
+    <string name="btn_left">←</string>
 </resources>
