@@ -5,4 +5,5 @@
     <string name="btn_back">↓</string>
     <string name="btn_right">→</string>
     <string name="btn_left">←</string>
+    <string name="btn_stop">■</string>
 </resources>
