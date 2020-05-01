@@ -6,6 +6,9 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 
 import android.app.Application
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.speech.RecognizerIntent
 import android.util.Log
 import android.view.MotionEvent
 import com.github.kittinunf.fuel.Fuel
@@ -17,186 +20,224 @@ import com.github.kittinunf.result.Result
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.runBlocking
+import java.util.*
+
+const val REQUEST_CODE = 1000
 
 class MainActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        button.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                if (v != null) {
-                    v.performClick()
-                }
-                when (event?.action) {
-                    MotionEvent.ACTION_DOWN ->{
-                        val url = "http://192.168.0.8:8000/tank/go_forward"
-                        runBlocking {
-                            url.httpGet().response{ request, responce, result ->
-                                when (result) {
-                                    is Result.Success -> {
-                                        // レスポンスボディを表示
-                                        println("非同期処理の結果：" + responce.toString())
-                                    }
-                                    is Result.Failure -> {
-                                        println("通信に失敗しました。")
-                                    }
+        button.setOnTouchListener { v, event ->
+            if (v != null) {
+                v.performClick()
+            }
+            when (event?.action) {
+                MotionEvent.ACTION_DOWN ->{
+                    val url = "http://raspberrypi.local:8000/tank/go_forward"
+                    runBlocking {
+                        url.httpGet().response{ request, responce, result ->
+                            when (result) {
+                                is Result.Success -> {
+                                    // レスポンスボディを表示
+                                    println("非同期処理の結果：" + responce.toString())
+                                }
+                                is Result.Failure -> {
+                                    println("通信に失敗しました。")
                                 }
                             }
                         }
                     }
-                    MotionEvent.ACTION_UP->{
-                        val url = "http://192.168.0.8:8000/tank/stop"
-                        runBlocking {
-                            url.httpGet().response{ request, responce, result ->
-                                when (result) {
-                                    is Result.Success -> {
-                                        // レスポンスボディを表示
-                                        println("非同期処理の結果：" + responce.toString())
-                                    }
-                                    is Result.Failure -> {
-                                        println("通信に失敗しました。")
-                                    }
+                }
+                MotionEvent.ACTION_UP->{
+                    val url = "http://raspberrypi.local:8000/tank/stop"
+                    runBlocking {
+                        url.httpGet().response{ request, responce, result ->
+                            when (result) {
+                                is Result.Success -> {
+                                    // レスポンスボディを表示
+                                    println("非同期処理の結果：" + responce.toString())
                                 }
-                            }
-                        }
-                    }//Do Something
-                }
-
-                return v?.onTouchEvent(event) ?: true
-            }
-        })
-        button2.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                if (v != null) {
-                    v.performClick()
-                }
-                when (event?.action) {
-                    MotionEvent.ACTION_DOWN ->{
-                        val url = "http://192.168.0.8:8000/tank/go_backward"
-                        runBlocking {
-                            url.httpGet().response{ request, responce, result ->
-                                when (result) {
-                                    is Result.Success -> {
-                                        // レスポンスボディを表示
-                                        println("非同期処理の結果：" + responce.toString())
-                                    }
-                                    is Result.Failure -> {
-                                        println("通信に失敗しました。")
-                                    }
+                                is Result.Failure -> {
+                                    println("通信に失敗しました。")
                                 }
                             }
                         }
                     }
-                    MotionEvent.ACTION_UP->{
-                        val url = "http://192.168.0.8:8000/tank/stop"
-                        runBlocking {
-                            url.httpGet().response{ request, responce, result ->
-                                when (result) {
-                                    is Result.Success -> {
-                                        // レスポンスボディを表示
-                                        println("非同期処理の結果：" + responce.toString())
-                                    }
-                                    is Result.Failure -> {
-                                        println("通信に失敗しました。")
-                                    }
-                                }
-                            }
-                        }
-                    }//Do Something
-                }
-
-                return v?.onTouchEvent(event) ?: true
+                }//Do Something
             }
-        })
 
-        button3.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                if (v != null) {
-                    v.performClick()
-                }
-                when (event?.action) {
-                    MotionEvent.ACTION_DOWN ->{
-                        val url = "http://192.168.0.8:8000/tank/turn_left"
-                        runBlocking {
-                            url.httpGet().response{ request, responce, result ->
-                                when (result) {
-                                    is Result.Success -> {
-                                        // レスポンスボディを表示
-                                        println("非同期処理の結果：" + responce.toString())
-                                    }
-                                    is Result.Failure -> {
-                                        println("通信に失敗しました。")
-                                    }
+            v?.onTouchEvent(event) ?: true
+        }
+
+        button2.setOnTouchListener { v, event ->
+            if (v != null) {
+                v.performClick()
+            }
+            when (event?.action) {
+                MotionEvent.ACTION_DOWN ->{
+                    val url = "http://raspberrypi.local:8000/tank/go_backward"
+                    runBlocking {
+                        url.httpGet().response{ request, responce, result ->
+                            when (result) {
+                                is Result.Success -> {
+                                    // レスポンスボディを表示
+                                    println("非同期処理の結果：" + responce.toString())
+                                }
+                                is Result.Failure -> {
+                                    println("通信に失敗しました。")
                                 }
                             }
                         }
                     }
-                    MotionEvent.ACTION_UP->{
-                        val url = "http://192.168.0.8:8000/tank/stop"
-                        runBlocking {
-                            url.httpGet().response{ request, responce, result ->
-                                when (result) {
-                                    is Result.Success -> {
-                                        // レスポンスボディを表示
-                                        println("非同期処理の結果：" + responce.toString())
-                                    }
-                                    is Result.Failure -> {
-                                        println("通信に失敗しました。")
-                                    }
+                }
+                MotionEvent.ACTION_UP->{
+                    val url = "http://raspberrypi.local:8000/tank/stop"
+                    runBlocking {
+                        url.httpGet().response{ request, responce, result ->
+                            when (result) {
+                                is Result.Success -> {
+                                    // レスポンスボディを表示
+                                    println("非同期処理の結果：" + responce.toString())
                                 }
-                            }
-                        }
-                    }//Do Something
-                }
-
-                return v?.onTouchEvent(event) ?: true
-            }
-        })
-
-        button4.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                if (v != null) {
-                    v.performClick()
-                }
-                when (event?.action) {
-                    MotionEvent.ACTION_DOWN ->{
-                        val url = "http://192.168.0.8:8000/tank/turn_right"
-                        runBlocking {
-                            url.httpGet().response{ request, responce, result ->
-                                when (result) {
-                                    is Result.Success -> {
-                                        // レスポンスボディを表示
-                                        println("非同期処理の結果：" + responce.toString())
-                                    }
-                                    is Result.Failure -> {
-                                        println("通信に失敗しました。")
-                                    }
+                                is Result.Failure -> {
+                                    println("通信に失敗しました。")
                                 }
                             }
                         }
                     }
-                    MotionEvent.ACTION_UP->{
-                        val url = "http://192.168.0.8:8000/tank/stop"
-                        runBlocking {
-                            url.httpGet().response{ request, responce, result ->
-                                when (result) {
-                                    is Result.Success -> {
-                                        // レスポンスボディを表示
-                                        println("非同期処理の結果：" + responce.toString())
-                                    }
-                                    is Result.Failure -> {
-                                        println("通信に失敗しました。")
-                                    }
+                }//Do Something
+            }
+
+            v?.onTouchEvent(event) ?: true
+        }
+
+        button3.setOnTouchListener { v, event ->
+            if (v != null) {
+                v.performClick()
+            }
+            when (event?.action) {
+                MotionEvent.ACTION_DOWN ->{
+                    val url = "http://raspberrypi.local:8000/tank/turn_left"
+                    runBlocking {
+                        url.httpGet().response{ request, responce, result ->
+                            when (result) {
+                                is Result.Success -> {
+                                    // レスポンスボディを表示
+                                    println("非同期処理の結果：" + responce.toString())
+                                }
+                                is Result.Failure -> {
+                                    println("通信に失敗しました。")
                                 }
                             }
                         }
-                    }//Do Something
+                    }
                 }
-
-                return v?.onTouchEvent(event) ?: true
+                MotionEvent.ACTION_UP->{
+                    val url = "http://raspberrypi.local:8000/tank/stop"
+                    runBlocking {
+                        url.httpGet().response{ request, responce, result ->
+                            when (result) {
+                                is Result.Success -> {
+                                    // レスポンスボディを表示
+                                    println("非同期処理の結果：" + responce.toString())
+                                }
+                                is Result.Failure -> {
+                                    println("通信に失敗しました。")
+                                }
+                            }
+                        }
+                    }
+                }//Do Something
             }
-        })
+
+            v?.onTouchEvent(event) ?: true
+        }
+
+        button4.setOnTouchListener { v, event ->
+            if (v != null) {
+                v.performClick()
+            }
+            when (event?.action) {
+                MotionEvent.ACTION_DOWN ->{
+                    val url = "http://raspberrypi.local:8000/tank/turn_right"
+                    runBlocking {
+                        url.httpGet().response{ request, responce, result ->
+                            when (result) {
+                                is Result.Success -> {
+                                    // レスポンスボディを表示
+                                    println("非同期処理の結果：" + responce.toString())
+                                }
+                                is Result.Failure -> {
+                                    println("通信に失敗しました。")
+                                }
+                            }
+                        }
+                    }
+                }
+                MotionEvent.ACTION_UP->{
+                    val url = "http://raspberrypi.local:8000/tank/stop"
+                    runBlocking {
+                        url.httpGet().response{ request, responce, result ->
+                            when (result) {
+                                is Result.Success -> {
+                                    // レスポンスボディを表示
+                                    println("非同期処理の結果：" + responce.toString())
+                                }
+                                is Result.Failure -> {
+                                    println("通信に失敗しました。")
+                                }
+                            }
+                        }
+                    }
+                }//Do Something
+            }
+
+            v?.onTouchEvent(event) ?: true
+        }
+
+        // Activityに設置しているボタンをタップすることで音声認識開始
+        button5.setOnClickListener { // 音声認識を開始
+            listen()
+        }
+    }
+
+    private fun listen() {
+        // 音声認識Intent
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        // 音声の言語は日本語
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.JAPAN.toString())
+        // 認識結果の最大数
+        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 10)
+        // プロンプトに表示する文字列の設定
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "音声聞き取り中")
+
+        try {
+            // インテントを発行
+            startActivityForResult(intent, REQUEST_CODE)
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
+            textView.text = (e.message)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+            if(data != null)
+            {
+                // 認識結果を取得
+                val results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                // 内容があれば
+                if (results != null) {
+                    if (results.size > 0) {
+                        // インデックス0の結果を表示
+                        textView.text = results[0]
+                    }
+                }
+            }
+        }
     }
 }

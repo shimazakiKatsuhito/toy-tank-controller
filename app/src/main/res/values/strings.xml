@@ -6,4 +6,6 @@
     <string name="btn_right">→</string>
     <string name="btn_left">←</string>
     <string name="btn_stop">■</string>
+    <string name="btn_voice">音声認識</string>
+    <string name="btn_hint_voice">音声認識結果が表示されます</string>
 </resources>
