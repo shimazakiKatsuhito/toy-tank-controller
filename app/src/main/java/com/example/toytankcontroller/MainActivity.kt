@@ -32,36 +32,10 @@ class MainActivity : AppCompatActivity() {
             }
             when (event?.action) {
                 MotionEvent.ACTION_DOWN ->{
-                    val url = "http://$TANK_ADR:8000/tank/go_forward"
-                    runBlocking {
-                        url.httpGet().response{ request, responce, result ->
-                            when (result) {
-                                is Result.Success -> {
-                                    // レスポンスボディを表示
-                                    println("非同期処理の結果：" + responce.toString())
-                                }
-                                is Result.Failure -> {
-                                    println("通信に失敗しました。")
-                                }
-                            }
-                        }
-                    }
+                    sendCommGoForward()
                 }
                 MotionEvent.ACTION_UP->{
-                    val url = "http://$TANK_ADR:8000/tank/stop"
-                    runBlocking {
-                        url.httpGet().response{ request, responce, result ->
-                            when (result) {
-                                is Result.Success -> {
-                                    // レスポンスボディを表示
-                                    println("非同期処理の結果：" + responce.toString())
-                                }
-                                is Result.Failure -> {
-                                    println("通信に失敗しました。")
-                                }
-                            }
-                        }
-                    }
+                    sendCommStop()
                 }//Do Something
             }
 
@@ -75,36 +49,10 @@ class MainActivity : AppCompatActivity() {
             }
             when (event?.action) {
                 MotionEvent.ACTION_DOWN ->{
-                    val url = "http://$TANK_ADR:8000/tank/go_backward"
-                    runBlocking {
-                        url.httpGet().response{ request, responce, result ->
-                            when (result) {
-                                is Result.Success -> {
-                                    // レスポンスボディを表示
-                                    println("非同期処理の結果：" + responce.toString())
-                                }
-                                is Result.Failure -> {
-                                    println("通信に失敗しました。")
-                                }
-                            }
-                        }
-                    }
+                    sendCommGoBackward()
                 }
                 MotionEvent.ACTION_UP->{
-                    val url = "http://$TANK_ADR:8000/tank/stop"
-                    runBlocking {
-                        url.httpGet().response{ request, responce, result ->
-                            when (result) {
-                                is Result.Success -> {
-                                    // レスポンスボディを表示
-                                    println("非同期処理の結果：" + responce.toString())
-                                }
-                                is Result.Failure -> {
-                                    println("通信に失敗しました。")
-                                }
-                            }
-                        }
-                    }
+                    sendCommStop()
                 }//Do Something
             }
 
@@ -118,36 +66,10 @@ class MainActivity : AppCompatActivity() {
             }
             when (event?.action) {
                 MotionEvent.ACTION_DOWN ->{
-                    val url = "http://$TANK_ADR:8000/tank/turn_left"
-                    runBlocking {
-                        url.httpGet().response{ request, responce, result ->
-                            when (result) {
-                                is Result.Success -> {
-                                    // レスポンスボディを表示
-                                    println("非同期処理の結果：" + responce.toString())
-                                }
-                                is Result.Failure -> {
-                                    println("通信に失敗しました。")
-                                }
-                            }
-                        }
-                    }
+                    sendCommTurnLeft()
                 }
                 MotionEvent.ACTION_UP->{
-                    val url = "http://$TANK_ADR:8000/tank/stop"
-                    runBlocking {
-                        url.httpGet().response{ request, responce, result ->
-                            when (result) {
-                                is Result.Success -> {
-                                    // レスポンスボディを表示
-                                    println("非同期処理の結果：" + responce.toString())
-                                }
-                                is Result.Failure -> {
-                                    println("通信に失敗しました。")
-                                }
-                            }
-                        }
-                    }
+                    sendCommStop()
                 }//Do Something
             }
 
@@ -161,36 +83,10 @@ class MainActivity : AppCompatActivity() {
             }
             when (event?.action) {
                 MotionEvent.ACTION_DOWN ->{
-                    val url = "http://$TANK_ADR:8000/tank/turn_right"
-                    runBlocking {
-                        url.httpGet().response{ request, responce, result ->
-                            when (result) {
-                                is Result.Success -> {
-                                    // レスポンスボディを表示
-                                    println("非同期処理の結果：" + responce.toString())
-                                }
-                                is Result.Failure -> {
-                                    println("通信に失敗しました。")
-                                }
-                            }
-                        }
-                    }
+                    sendCommTurnRight()
                 }
                 MotionEvent.ACTION_UP->{
-                    val url = "http://$TANK_ADR:8000/tank/stop"
-                    runBlocking {
-                        url.httpGet().response{ request, responce, result ->
-                            when (result) {
-                                is Result.Success -> {
-                                    // レスポンスボディを表示
-                                    println("非同期処理の結果：" + responce.toString())
-                                }
-                                is Result.Failure -> {
-                                    println("通信に失敗しました。")
-                                }
-                            }
-                        }
-                    }
+                    sendCommStop()
                 }//Do Something
             }
 
@@ -201,8 +97,14 @@ class MainActivity : AppCompatActivity() {
         button5.setOnClickListener { // 音声認識を開始
             listen()
         }
+
+        // 発射ボタン押下
+        button6.setOnClickListener { // 砲台からBB弾を発射
+            sendCommTurretShoot()
+        }
     }
 
+    // 音声認識を実行
     private fun listen() {
         // 音声認識Intent
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -222,6 +124,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // 音声認識結果対応処理
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -235,93 +138,177 @@ class MainActivity : AppCompatActivity() {
                     if (results.size > 0) {
                         // インデックス0の結果を表示
                         textView.text = results[0]
-                        // val str = results[0]
-                        // val spanStr = SpannableString(str)
-                        // spanStr.setSpan(UnderlineSpan(), 0, str.length, 0)
-                        // textView.text = spanStr
 
                         when(textView.text){
                             "前に進め" -> {
-                                val url = "http://$TANK_ADR:8000/tank/go_forward"
-                                runBlocking {
-                                    url.httpGet().response{ request, responce, result ->
-                                        when (result) {
-                                            is Result.Success -> {
-                                                // レスポンスボディを表示
-                                                println("非同期処理の結果：" + responce.toString())
-                                            }
-                                            is Result.Failure -> {
-                                                println("通信に失敗しました。")
-                                            }
-                                        }
-                                    }
-                                }
+                                sendCommGoForward()
                             }
                             "後ろに進め" ->{
-                                val url = "http://$TANK_ADR:8000/tank/go_backward"
-                                runBlocking {
-                                    url.httpGet().response{ request, responce, result ->
-                                        when (result) {
-                                            is Result.Success -> {
-                                                // レスポンスボディを表示
-                                                println("非同期処理の結果：" + responce.toString())
-                                            }
-                                            is Result.Failure -> {
-                                                println("通信に失敗しました。")
-                                            }
-                                        }
-                                    }
-                                }
+                                sendCommGoBackward()
                             }
                             "左に旋回" -> {
-                                val url = "http://$TANK_ADR:8000/tank/turn_left"
-                                runBlocking {
-                                    url.httpGet().response{ request, responce, result ->
-                                        when (result) {
-                                            is Result.Success -> {
-                                                // レスポンスボディを表示
-                                                println("非同期処理の結果：" + responce.toString())
-                                            }
-                                            is Result.Failure -> {
-                                                println("通信に失敗しました。")
-                                            }
-                                        }
-                                    }
-                                }
+                                sendCommTurnLeft()
                             }
                             "右に旋回" -> {
-                                val url = "http://$TANK_ADR:8000/tank/turn_right"
-                                runBlocking {
-                                    url.httpGet().response{ request, responce, result ->
-                                        when (result) {
-                                            is Result.Success -> {
-                                                // レスポンスボディを表示
-                                                println("非同期処理の結果：" + responce.toString())
-                                            }
-                                            is Result.Failure -> {
-                                                println("通信に失敗しました。")
-                                            }
-                                        }
-                                    }
-                                }
+                                sendCommTurnRight()
                             }
                             "止まれ" -> {
-                                val url = "http://$TANK_ADR:8000/tank/stop"
-                                runBlocking {
-                                    url.httpGet().response{ request, responce, result ->
-                                        when (result) {
-                                            is Result.Success -> {
-                                                // レスポンスボディを表示
-                                                println("非同期処理の結果：" + responce.toString())
-                                            }
-                                            is Result.Failure -> {
-                                                println("通信に失敗しました。")
-                                            }
-                                        }
-                                    }
-                                }
+                                sendCommStop()
+                            }
+                            "追尾せよ" -> {
+                                sendCommTurretFollow()
+                            }
+                            "追尾やめ" -> {
+                                sendCommTurretUnFollow()
+                            }
+                            "打て" -> {
+                                sendCommTurretShoot()
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    // 前進コマンドを送信
+    private fun sendCommGoForward(){
+        val url = "http://$TANK_ADR:8000/tank/go_forward"
+        runBlocking {
+            url.httpGet().response{ request, responce, result ->
+                when (result) {
+                    is Result.Success -> {
+                        // レスポンスボディを表示
+                        println("非同期処理の結果：" + responce.toString())
+                    }
+                    is Result.Failure -> {
+                        println("通信に失敗しました。")
+                    }
+                }
+            }
+        }
+    }
+
+    // 後退コマンドを送信
+    private fun sendCommGoBackward(){
+        val url = "http://$TANK_ADR:8000/tank/go_backward"
+        runBlocking {
+            url.httpGet().response{ request, responce, result ->
+                when (result) {
+                    is Result.Success -> {
+                        // レスポンスボディを表示
+                        println("非同期処理の結果：" + responce.toString())
+                    }
+                    is Result.Failure -> {
+                        println("通信に失敗しました。")
+                    }
+                }
+            }
+        }
+    }
+
+    // 左旋回コマンドを送信
+    private fun sendCommTurnLeft(){
+        val url = "http://$TANK_ADR:8000/tank/turn_left"
+        runBlocking {
+            url.httpGet().response{ request, responce, result ->
+                when (result) {
+                    is Result.Success -> {
+                        // レスポンスボディを表示
+                        println("非同期処理の結果：" + responce.toString())
+                    }
+                    is Result.Failure -> {
+                        println("通信に失敗しました。")
+                    }
+                }
+            }
+        }
+    }
+
+    // 右旋回コマンドを送信
+    private fun sendCommTurnRight(){
+        val url = "http://$TANK_ADR:8000/tank/turn_right"
+        runBlocking {
+            url.httpGet().response{ request, responce, result ->
+                when (result) {
+                    is Result.Success -> {
+                        // レスポンスボディを表示
+                        println("非同期処理の結果：" + responce.toString())
+                    }
+                    is Result.Failure -> {
+                        println("通信に失敗しました。")
+                    }
+                }
+            }
+        }
+    }
+
+    // 停止コマンドを送信
+    private fun sendCommStop(){
+        val url = "http://$TANK_ADR:8000/tank/stop"
+        runBlocking {
+            url.httpGet().response{ request, responce, result ->
+                when (result) {
+                    is Result.Success -> {
+                        // レスポンスボディを表示
+                        println("非同期処理の結果：" + responce.toString())
+                    }
+                    is Result.Failure -> {
+                        println("通信に失敗しました。")
+                    }
+                }
+            }
+        }
+    }
+
+    // 自動追尾開始コマンドを送信
+    private fun sendCommTurretFollow(){
+        val url = "http://$TANK_ADR:8000/turret/follow"
+        runBlocking {
+            url.httpGet().response{ request, responce, result ->
+                when (result) {
+                    is Result.Success -> {
+                        // レスポンスボディを表示
+                        println("非同期処理の結果：" + responce.toString())
+                    }
+                    is Result.Failure -> {
+                        println("通信に失敗しました。")
+                    }
+                }
+            }
+        }
+    }
+
+    // 自動追尾終了コマンドを送信
+    private fun sendCommTurretUnFollow(){
+        val url = "http://$TANK_ADR:8000/turret/unfollow"
+        runBlocking {
+            url.httpGet().response{ request, responce, result ->
+                when (result) {
+                    is Result.Success -> {
+                        // レスポンスボディを表示
+                        println("非同期処理の結果：" + responce.toString())
+                    }
+                    is Result.Failure -> {
+                        println("通信に失敗しました。")
+                    }
+                }
+            }
+        }
+    }
+
+    // 発射コマンドを送信
+    private fun sendCommTurretShoot(){
+        val url = "http://$TANK_ADR:8000/turret/shoot"
+        runBlocking {
+            url.httpGet().response{ request, responce, result ->
+                when (result) {
+                    is Result.Success -> {
+                        // レスポンスボディを表示
+                        println("非同期処理の結果：" + responce.toString())
+                    }
+                    is Result.Failure -> {
+                        println("通信に失敗しました。")
                     }
                 }
             }
