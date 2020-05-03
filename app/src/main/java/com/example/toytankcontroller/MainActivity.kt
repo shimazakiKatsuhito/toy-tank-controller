@@ -1,26 +1,20 @@
 package com.example.toytankcontroller
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.view.View
-import androidx.appcompat.app.AlertDialog
 
-import android.app.Application
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.os.Bundle
 import android.speech.RecognizerIntent
-import android.util.Log
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import android.view.MotionEvent
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.FuelManager
+import androidx.appcompat.app.AppCompatActivity
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.result.Result
-
-
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.runBlocking
 import java.util.*
+
 
 const val REQUEST_CODE = 1000
 const val TANK_ADR = "192.168.0.5"
@@ -241,6 +235,10 @@ class MainActivity : AppCompatActivity() {
                     if (results.size > 0) {
                         // インデックス0の結果を表示
                         textView.text = results[0]
+                        // val str = results[0]
+                        // val spanStr = SpannableString(str)
+                        // spanStr.setSpan(UnderlineSpan(), 0, str.length, 0)
+                        // textView.text = spanStr
 
                         when(textView.text){
                             "前に進め" -> {
