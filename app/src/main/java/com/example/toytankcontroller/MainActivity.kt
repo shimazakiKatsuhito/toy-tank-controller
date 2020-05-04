@@ -102,6 +102,19 @@ class MainActivity : AppCompatActivity() {
         button6.setOnClickListener { // 砲台からBB弾を発射
             sendCommTurretShoot()
         }
+
+        // Switchに、状態変更イベントを追加
+        switch1.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                // ONの場合
+                // 自動追尾開始
+                sendCommTurretFollow()
+            } else {
+                // OFFの場合
+                // 自動追尾終了
+                sendCommTurretUnFollow()
+            }
+        }
     }
 
     // 音声認識を実行
