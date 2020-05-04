@@ -1,202 +1,251 @@
 package com.example.toytankcontroller
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.view.View
-import androidx.appcompat.app.AlertDialog
 
-import android.app.Application
-import android.util.Log
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.os.Bundle
+import android.speech.RecognizerIntent
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import android.view.MotionEvent
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.FuelManager
+import androidx.appcompat.app.AppCompatActivity
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.result.Result
-
-
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.runBlocking
+import java.util.*
+
+
+const val REQUEST_CODE = 1000
+const val TANK_ADR = "192.168.0.5"
 
 class MainActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        button.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                if (v != null) {
-                    v.performClick()
+        // 十字キーボタン押下設定ーボタンを押している間のみ戦車が動きます。
+        // 前進ボタン押下
+        button.setOnTouchListener { v, event ->
+            if (v != null) {
+                v.performClick()
+            }
+            when (event?.action) {
+                MotionEvent.ACTION_DOWN ->{
+                    sendCommGoForward()
                 }
-                when (event?.action) {
-                    MotionEvent.ACTION_DOWN ->{
-                        val url = "http://192.168.0.8:8000/tank/go_forward"
-                        runBlocking {
-                            url.httpGet().response{ request, responce, result ->
-                                when (result) {
-                                    is Result.Success -> {
-                                        // レスポンスボディを表示
-                                        println("非同期処理の結果：" + responce.toString())
-                                    }
-                                    is Result.Failure -> {
-                                        println("通信に失敗しました。")
-                                    }
-                                }
+                MotionEvent.ACTION_UP->{
+                    sendCommStop()
+                }//Do Something
+            }
+
+            v?.onTouchEvent(event) ?: true
+        }
+
+        // 後退ボタン押下
+        button2.setOnTouchListener { v, event ->
+            if (v != null) {
+                v.performClick()
+            }
+            when (event?.action) {
+                MotionEvent.ACTION_DOWN ->{
+                    sendCommGoBackward()
+                }
+                MotionEvent.ACTION_UP->{
+                    sendCommStop()
+                }//Do Something
+            }
+
+            v?.onTouchEvent(event) ?: true
+        }
+
+        // 左旋回ボタン押下
+        button3.setOnTouchListener { v, event ->
+            if (v != null) {
+                v.performClick()
+            }
+            when (event?.action) {
+                MotionEvent.ACTION_DOWN ->{
+                    sendCommTurnLeft()
+                }
+                MotionEvent.ACTION_UP->{
+                    sendCommStop()
+                }//Do Something
+            }
+
+            v?.onTouchEvent(event) ?: true
+        }
+
+        // 右旋回ボタン押下
+        button4.setOnTouchListener { v, event ->
+            if (v != null) {
+                v.performClick()
+            }
+            when (event?.action) {
+                MotionEvent.ACTION_DOWN ->{
+                    sendCommTurnRight()
+                }
+                MotionEvent.ACTION_UP->{
+                    sendCommStop()
+                }//Do Something
+            }
+
+            v?.onTouchEvent(event) ?: true
+        }
+
+        // Activityに設置しているボタンをタップすることで音声認識開始
+        button5.setOnClickListener { // 音声認識を開始
+            listen()
+        }
+
+        // 発射ボタン押下
+        button6.setOnClickListener { // 砲台からBB弾を発射
+            sendCommTurretShoot()
+        }
+
+        // Switchに、状態変更イベントを追加
+        switch1.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                // ONの場合
+                // 自動追尾開始
+                sendCommTurretFollow()
+            } else {
+                // OFFの場合
+                // 自動追尾終了
+                sendCommTurretUnFollow()
+            }
+        }
+    }
+
+    // 音声認識を実行
+    private fun listen() {
+        // 音声認識Intent
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        // 音声の言語は日本語
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.JAPAN.toString())
+        // 認識結果の最大数
+        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 10)
+        // プロンプトに表示する文字列の設定
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "音声聞き取り中")
+
+        try {
+            // インテントを発行
+            startActivityForResult(intent, REQUEST_CODE)
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
+            textView.text = (e.message)
+        }
+    }
+
+    // 音声認識結果対応処理
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+            if(data != null)
+            {
+                // 認識結果を取得
+                val results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                // 内容があれば
+                if (results != null) {
+                    if (results.size > 0) {
+                        // インデックス0の結果を表示
+                        textView.text = results[0]
+
+                        when(textView.text){
+                            "前に進め" -> {
+                                sendCommGoForward()
+                            }
+                            "後ろに進め" ->{
+                                sendCommGoBackward()
+                            }
+                            "左に旋回" -> {
+                                sendCommTurnLeft()
+                            }
+                            "右に旋回" -> {
+                                sendCommTurnRight()
+                            }
+                            "止まれ" -> {
+                                sendCommStop()
+                            }
+                            "追尾せよ" -> {
+                                sendCommTurretFollow()
+                            }
+                            "追尾やめ" -> {
+                                sendCommTurretUnFollow()
+                            }
+                            "打て" -> {
+                                sendCommTurretShoot()
                             }
                         }
                     }
-                    MotionEvent.ACTION_UP->{
-                        val url = "http://192.168.0.8:8000/tank/stop"
-                        runBlocking {
-                            url.httpGet().response{ request, responce, result ->
-                                when (result) {
-                                    is Result.Success -> {
-                                        // レスポンスボディを表示
-                                        println("非同期処理の結果：" + responce.toString())
-                                    }
-                                    is Result.Failure -> {
-                                        println("通信に失敗しました。")
-                                    }
-                                }
-                            }
-                        }
-                    }//Do Something
                 }
-
-                return v?.onTouchEvent(event) ?: true
             }
-        })
-        button2.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                if (v != null) {
-                    v.performClick()
-                }
-                when (event?.action) {
-                    MotionEvent.ACTION_DOWN ->{
-                        val url = "http://192.168.0.8:8000/tank/go_backward"
-                        runBlocking {
-                            url.httpGet().response{ request, responce, result ->
-                                when (result) {
-                                    is Result.Success -> {
-                                        // レスポンスボディを表示
-                                        println("非同期処理の結果：" + responce.toString())
-                                    }
-                                    is Result.Failure -> {
-                                        println("通信に失敗しました。")
-                                    }
-                                }
-                            }
-                        }
+        }
+    }
+
+    // ｈｔｔｐでコマンドを送信
+    private fun sendComm(url:String){
+        runBlocking {
+            url.httpGet().response{ request, responce, result ->
+                when (result) {
+                    is Result.Success -> {
+                        // レスポンスボディを表示
+                        println("非同期処理の結果：" + responce.toString())
                     }
-                    MotionEvent.ACTION_UP->{
-                        val url = "http://192.168.0.8:8000/tank/stop"
-                        runBlocking {
-                            url.httpGet().response{ request, responce, result ->
-                                when (result) {
-                                    is Result.Success -> {
-                                        // レスポンスボディを表示
-                                        println("非同期処理の結果：" + responce.toString())
-                                    }
-                                    is Result.Failure -> {
-                                        println("通信に失敗しました。")
-                                    }
-                                }
-                            }
-                        }
-                    }//Do Something
-                }
-
-                return v?.onTouchEvent(event) ?: true
-            }
-        })
-
-        button3.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                if (v != null) {
-                    v.performClick()
-                }
-                when (event?.action) {
-                    MotionEvent.ACTION_DOWN ->{
-                        val url = "http://192.168.0.8:8000/tank/turn_left"
-                        runBlocking {
-                            url.httpGet().response{ request, responce, result ->
-                                when (result) {
-                                    is Result.Success -> {
-                                        // レスポンスボディを表示
-                                        println("非同期処理の結果：" + responce.toString())
-                                    }
-                                    is Result.Failure -> {
-                                        println("通信に失敗しました。")
-                                    }
-                                }
-                            }
-                        }
+                    is Result.Failure -> {
+                        println("通信に失敗しました。")
                     }
-                    MotionEvent.ACTION_UP->{
-                        val url = "http://192.168.0.8:8000/tank/stop"
-                        runBlocking {
-                            url.httpGet().response{ request, responce, result ->
-                                when (result) {
-                                    is Result.Success -> {
-                                        // レスポンスボディを表示
-                                        println("非同期処理の結果：" + responce.toString())
-                                    }
-                                    is Result.Failure -> {
-                                        println("通信に失敗しました。")
-                                    }
-                                }
-                            }
-                        }
-                    }//Do Something
                 }
-
-                return v?.onTouchEvent(event) ?: true
             }
-        })
+        }
+    }
 
-        button4.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                if (v != null) {
-                    v.performClick()
-                }
-                when (event?.action) {
-                    MotionEvent.ACTION_DOWN ->{
-                        val url = "http://192.168.0.8:8000/tank/turn_right"
-                        runBlocking {
-                            url.httpGet().response{ request, responce, result ->
-                                when (result) {
-                                    is Result.Success -> {
-                                        // レスポンスボディを表示
-                                        println("非同期処理の結果：" + responce.toString())
-                                    }
-                                    is Result.Failure -> {
-                                        println("通信に失敗しました。")
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    MotionEvent.ACTION_UP->{
-                        val url = "http://192.168.0.8:8000/tank/stop"
-                        runBlocking {
-                            url.httpGet().response{ request, responce, result ->
-                                when (result) {
-                                    is Result.Success -> {
-                                        // レスポンスボディを表示
-                                        println("非同期処理の結果：" + responce.toString())
-                                    }
-                                    is Result.Failure -> {
-                                        println("通信に失敗しました。")
-                                    }
-                                }
-                            }
-                        }
-                    }//Do Something
-                }
+    // 前進コマンドを送信
+    private fun sendCommGoForward(){
+        val url = "http://$TANK_ADR:8000/tank/go_forward"
+        sendComm(url)
+    }
 
-                return v?.onTouchEvent(event) ?: true
-            }
-        })
+    // 後退コマンドを送信
+    private fun sendCommGoBackward(){
+        val url = "http://$TANK_ADR:8000/tank/go_backward"
+        sendComm(url)
+    }
+
+    // 左旋回コマンドを送信
+    private fun sendCommTurnLeft(){
+        val url = "http://$TANK_ADR:8000/tank/turn_left"
+        sendComm(url)
+    }
+
+    // 右旋回コマンドを送信
+    private fun sendCommTurnRight(){
+        val url = "http://$TANK_ADR:8000/tank/turn_right"
+        sendComm(url)
+    }
+
+    // 停止コマンドを送信
+    private fun sendCommStop(){
+        val url = "http://$TANK_ADR:8000/tank/stop"
+        sendComm(url)
+    }
+
+    // 自動追尾開始コマンドを送信
+    private fun sendCommTurretFollow(){
+        val url = "http://$TANK_ADR:8000/turret/follow"
+        sendComm(url)
+    }
+
+    // 自動追尾終了コマンドを送信
+    private fun sendCommTurretUnFollow(){
+        val url = "http://$TANK_ADR:8000/turret/unfollow"
+        sendComm(url)
+    }
+
+    // 発射コマンドを送信
+    private fun sendCommTurretShoot(){
+        val url = "http://$TANK_ADR:8000/turret/shoot"
+        sendComm(url)
     }
 }

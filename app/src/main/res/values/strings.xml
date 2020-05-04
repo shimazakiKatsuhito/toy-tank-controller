@@ -6,4 +6,13 @@
     <string name="btn_right">→</string>
     <string name="btn_left">←</string>
     <string name="btn_stop">■</string>
+    <string name="btn_voice">音声認識</string>
+    <string name="txt_label1"><u>音声認識結果：</u></string>
+    <string name="hint_voice">ここに音声認識結果が表示されます</string>
+    <string name="txt_label2"><u>音声コマンド：</u>\n\t前進　：前に進め\n\t後退　：後ろに進め\n\t左旋回：左に旋回\n\t右旋回：右に旋回\n\t停止　：止まれ</string>
+    <string name="txt_label3">\n\t追尾開始：追尾せよ\n\t追尾停止：追尾やめ\n\t発射　　：打て</string>
+    <string name="txt_label4"><u>手動操作ボタン：</u></string>
+    <string name="swt_auto_track">自動追尾</string>
+    <string name="btn_shot">発射</string>
+    <string name="img_content_description1">アイコン的画像</string>
 </resources>
