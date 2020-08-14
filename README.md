@@ -29,7 +29,7 @@ kotlin
  
 ## 使い方
 ### インストール
-1. androidstudioをインストール。<br>  次のサイトを参考にしました。  
+1. androidstudioをインストール。<br>  [ここ](https://developer.android.com/studio?hl=ja)から入手可能。  
 2. androidstudioをセットアップ。<br>  次のサイトを参考にしました。<br>  ・[Android Studio をインストールする手順（Windows）](https://akira-watson.com/android/adt-windows.html)<br>  ・[Android Studioの使い方](https://www.petitmonte.com/java/howto_android_studio.html)
 
 ### デプロイ方法
