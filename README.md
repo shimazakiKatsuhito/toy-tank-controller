@@ -1,6 +1,6 @@
 # toy-tank-controller
 ## 概要：
-ラジコン戦車のコントローラーの役割を行う、スマホ(android)アプリです。
+[ラジコン戦車](https://github.com/shimazakiKatsuhito/toy-tank-2019)のコントローラーの役割を行う、スマホ(android)アプリです。
 
 ## 開発環境：
 OS:windows 10
