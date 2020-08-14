@@ -31,4 +31,4 @@ kotlin
  ・目標追尾(砲台動作)終了
  ・BB弾発射
 
-![Screenshot_2020-05-25-19-52-52](https://user-images.githubusercontent.com/54632092/90218214-32369d00-de3e-11ea-8064-b398bcb5fd79.jpg)
+![Screenshot_2020-05-25-19-52-52](https://user-images.githubusercontent.com/54632092/90218433-c0ab1e80-de3e-11ea-8a6d-bd4160e0bcb3.png)
