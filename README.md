@@ -1,9 +1,6 @@
 # toy-tank-controller
 ## 概要：
 [ラジコン戦車](https://github.com/shimazakiKatsuhito/toy-tank-2019)のコントローラーの役割を行う、スマホ(android)アプリです。以下のような操作コマンドをラジコン戦車に送ることができます。
-
-![Screenshot_2020-05-25-19-52-52](https://user-images.githubusercontent.com/54632092/90218433-c0ab1e80-de3e-11ea-8a6d-bd4160e0bcb3.png)
-
 ### 戦車操作コマンド
  - 前進　  ：戦車を前進させます。
  - 後退　  ：戦車を後退させます。
@@ -13,6 +10,8 @@
  - BB弾発射：戦車の砲台からBB弾を発射します。
  - 追尾開始：戦車搭載カメラの画像から砲台を目標位置まで旋回する追尾動作を開始します。
  - 追尾終了：戦車搭載カメラの画像から砲台を目標位置まで旋回する追尾動作を終了します。
+
+![Screenshot_2020-05-25-19-52-52](https://user-images.githubusercontent.com/54632092/90218433-c0ab1e80-de3e-11ea-8a6d-bd4160e0bcb3.png)
 
 ## 開発環境：
 OS:windows 10
