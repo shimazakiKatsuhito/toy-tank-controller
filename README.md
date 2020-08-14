@@ -33,4 +33,5 @@ kotlin
 2. androidstudioをセットアップ。<br>  次のサイトを参考にしました。<br>  ・[Android Studio をインストールする手順（Windows）](https://akira-watson.com/android/adt-windows.html)<br>  ・[Android Studioの使い方](https://www.petitmonte.com/java/howto_android_studio.html)
 
 ### デプロイ方法
-1. 適当なフォルダに当リポジトリをクローン
+1. 適当なフォルダに当リポジトリをクローン。
+2. AndroidStudioを起動してFile->openから当フォルダを選択し、ビルド・デバッグを実行。
