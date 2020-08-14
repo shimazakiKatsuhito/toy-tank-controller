@@ -14,8 +14,8 @@
 ![Screenshot_2020-05-25-19-52-52](https://user-images.githubusercontent.com/54632092/90218433-c0ab1e80-de3e-11ea-8a6d-bd4160e0bcb3.png)
 
 ## 開発環境：
-OS:windows 10
-Env:Andoid Studio 3.6.2
+OS:windows 10<br>  
+:Andoid Studio 3.6.2
 
 ## 開発言語：
 kotlin
