@@ -29,8 +29,8 @@ kotlin
  
 ## 使い方
 ### インストール
-1. androidstudioをインストール
+1. androidstudioをインストール<br>  [ここ](https://akira-watson.com/android/adt-windows.html)を参考にしました。
 2. androidstudioをセットアップ
-3. 適当なフォルダに当リポジトリをクローン
-### デプロイ方法
 
+### デプロイ方法
+1. 適当なフォルダに当リポジトリをクローン
