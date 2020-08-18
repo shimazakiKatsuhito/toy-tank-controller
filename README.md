@@ -1,4 +1,5 @@
 # toy-tank-controller
+ラジコン戦車コントローラ(スマホ)アプリ
 ## 概要：
 別途作成した[ラジコン戦車](https://github.com/shimazakiKatsuhito/toy-tank-2019)のコントローラーの役割を行う、スマホ(android)アプリです。<br>  以下のような操作コマンドをラジコン戦車に送ることができます。
 ### 戦車操作コマンド
