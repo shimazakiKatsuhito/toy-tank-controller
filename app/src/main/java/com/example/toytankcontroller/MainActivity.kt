@@ -17,7 +17,7 @@ import java.util.*
 
 
 const val REQUEST_CODE = 1000
-const val TANK_ADR = "192.168.0.5"
+const val TANK_ADR = "192.168.249.1"
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
